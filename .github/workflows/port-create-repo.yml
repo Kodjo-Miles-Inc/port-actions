@@ -1,0 +1,29 @@
+name: Scaffold a new repository
+on:
+  workflow_dispatch:
+    inputs:
+      port_context:
+        required: true
+        description: Includes the action's run id
+      service_name:
+        required: true
+        description: The name of the new repository
+        type: string
+jobs:
+  scaffold-service:
+    env:
+      ORG_NAME: Kodjo-Miles-Inc
+    runs-on: ubuntu-latest
+    steps:
+      - uses: port-labs/cookiecutter-gha@v1.1.1
+        id: scaff
+        with:
+          portClientId: ${{ secrets.PORT_CLIENT_ID }}
+          portClientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
+          token: ${{ secrets.ORG_ADMIN_TOKEN }}
+          portRunId: ${{ fromJson(inputs.port_context).runId }}
+          repositoryName: ${{ inputs.repository_name }}
+          portUserInputs: '{"cookiecutter_app_name": "${{ inputs.repository_name }}" }'
+          cookiecutterTemplate: https://github.com/lacion/cookiecutter-golang
+          blueprintIdentifier: "repository"
+          organizationName: ${{ env.ORG_NAME }}
