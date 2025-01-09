@@ -5,7 +5,7 @@ on:
       port_context:
         required: true
         description: Includes the action's run id
-      service_name:
+      repository_name:
         required: true
         description: The name of the new repository
         type: string
