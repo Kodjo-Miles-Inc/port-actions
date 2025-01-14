@@ -7,15 +7,15 @@ on:
         description: Includes the entity identifier and the action's run id
       domain:
         required: true
-        description: The domain to assign the service to
+        description: The domain to assign the repository to
         type: string
       type:
         required: true
-        description: The type of the service
+        description: The type of the repository
         type: string
       lifecycle:
         required: true
-        description: The lifecycle state of the service
+        description: The lifecycle state of the repository
         type: string
 jobs:
   enrichRepository:
@@ -23,7 +23,7 @@ jobs:
     steps:
       # Checkout the workflow's repository
       - uses: actions/checkout@v4
-      # Checkout the service's repository
+      # Checkout the repository
       - uses: actions/checkout@v4
         with:
           repository: "${{ github.repository_owner }}/${{ fromJson(inputs.port_context).entity }}"
