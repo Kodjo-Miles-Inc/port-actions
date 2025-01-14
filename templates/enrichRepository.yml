@@ -1,0 +1,9 @@
+# enrichRepository.yml
+
+- identifier: "{{ repository_identifier }}"
+  blueprint: repository
+  properties:
+    type: "{{ repository_type }}"
+    lifecycle: "{{ repository_lifecycle }}"
+  relations:
+    domain: "{{ domain_identifier }}"
