@@ -1,0 +1,89 @@
+name: Scaffold a new service
+
+on:
+  workflow_dispatch:
+    inputs:
+      service_name:
+        required: true
+        description: The name of the new service
+        type: string
+      description:
+        required: false
+        description: Description of the service
+        type: string
+      port_context:
+        required: true
+        description: Includes the action's run id
+        type: string
+
+jobs:
+  scaffold-service:
+    runs-on: ubuntu-latest
+    env:
+      ORG_NAME: Kodjo-Miles-Inc
+      PORT_RUN_ID: ${{ fromJson(inputs.port_context).runId }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create a log message
+        uses: port-labs/port-github-action@v1
+        with:
+          clientId: ${{ secrets.PORT_CLIENT_ID }}
+          clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
+          baseUrl: https://api.getport.io
+          operation: PATCH_RUN
+          runId: ${{ env.PORT_RUN_ID }}
+          logMessage: "Starting scaffolding of service and repository: ${{ inputs.service_name }}"
+
+      - name: Create GitHub Repository
+        env:
+          GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
+        run: |
+          gh repo create ${{ env.ORG_NAME }}/${{ inputs.service_name }} --private --description "${{ inputs.description }}"
+          echo "REPO_URL=https://github.com/${{ env.ORG_NAME }}/${{ inputs.service_name }}" >> $GITHUB_ENV
+
+      - name: Create Repository in Port
+        uses: port-labs/port-github-action@v1
+        with:
+          clientId: ${{ secrets.PORT_CLIENT_ID }}
+          clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
+          baseUrl: https://api.getport.io
+          operation: UPSERT
+          identifier: ${{ inputs.service_name }}
+          title: ${{ inputs.service_name }}
+          blueprint: repository
+          properties: |
+            {
+              "url": "${{ env.REPO_URL }}",
+              "description": "${{ inputs.description }}"
+            }
+
+      - name: Create Service in Port with Repository Relation
+        uses: port-labs/port-github-action@v1
+        with:
+          clientId: ${{ secrets.PORT_CLIENT_ID }}
+          clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
+          baseUrl: https://api.getport.io
+          operation: UPSERT
+          identifier: ${{ inputs.service_name }}
+          title: ${{ inputs.service_name }}
+          blueprint: service
+          properties: |
+            {
+              "description": "${{ inputs.description }}"
+            }
+          relations: |
+            {
+              "repository": "${{ inputs.service_name }}"
+            }
+
+      - name: Create a log message
+        uses: port-labs/port-github-action@v1
+        with:
+          clientId: ${{ secrets.PORT_CLIENT_ID }}
+          clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
+          baseUrl: https://api.getport.io
+          operation: PATCH_RUN
+          runId: ${{ env.PORT_RUN_ID }}
+          logMessage: "Finished scaffolding of service and repository: ${{ inputs.service_name }}"
