@@ -68,7 +68,7 @@ jobs:
           operation: UPSERT
           identifier: ${{ inputs.service_name }}
           title: ${{ inputs.service_name }}
-          blueprint: service
+          blueprint: service_1
           properties: |
             {
               "description": "${{ inputs.description }}"
