@@ -37,11 +37,17 @@ jobs:
           logMessage: "Starting scaffolding of service and repository: ${{ inputs.service_name }}"
 
       - name: Create GitHub Repository
-        env:
-          GH_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
-        run: |
-          gh repo create ${{ env.ORG_NAME }}/${{ inputs.service_name }} --private --description "${{ inputs.description }}"
-          echo "REPO_URL=https://github.com/${{ env.ORG_NAME }}/${{ inputs.service_name }}" >> $GITHUB_ENV
+        uses: port-labs/cookiecutter-gha@v1.1.1
+        with:
+          portClientId: ${{ secrets.PORT_CLIENT_ID }}
+          portClientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
+          token: ${{ secrets.ORG_ADMIN_TOKEN }}
+          portRunId: ${{ fromJson(inputs.port_context).runId }}
+          repositoryName: ${{ inputs.service_name }}
+          portUserInputs: '{"cookiecutter_app_name": "${{ inputs.service_name }}" }'
+          cookiecutterTemplate: https://github.com/lacion/cookiecutter-golang
+          blueprintIdentifier: "repository"
+          organizationName: ${{ env.ORG_NAME }}
 
       - name: Create Repository in Port
         uses: port-labs/port-github-action@v1
