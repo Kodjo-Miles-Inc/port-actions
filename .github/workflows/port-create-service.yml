@@ -46,24 +46,10 @@ jobs:
           repositoryName: ${{ inputs.service_name }}
           portUserInputs: '{"cookiecutter_app_name": "${{ inputs.service_name }}" }'
           cookiecutterTemplate: https://github.com/lacion/cookiecutter-golang
-          blueprintIdentifier: "repository"
+          blueprintIdentifier: "service"
           organizationName: ${{ env.ORG_NAME }}
 
-      - name: Create Repository in Port
-        uses: port-labs/port-github-action@v1
-        with:
-          clientId: ${{ secrets.PORT_CLIENT_ID }}
-          clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
-          baseUrl: https://api.getport.io
-          operation: UPSERT
-          identifier: ${{ inputs.service_name }}
-          title: ${{ inputs.service_name }}
-          blueprint: repository
-          properties: |
-            {
-              "url": "${{ env.REPO_URL }}",
-              "description": "${{ inputs.description }}"
-            }
+    
 
       - name: Create Service in Port with Repository Relation
         uses: port-labs/port-github-action@v1
@@ -74,14 +60,10 @@ jobs:
           operation: UPSERT
           identifier: ${{ inputs.service_name }}
           title: ${{ inputs.service_name }}
-          blueprint: service_1
-          properties: |
-            {
-              "description": "${{ inputs.description }}"
-            }
+          blueprint: service_rep
           relations: |
             {
-              "repository": "${{ inputs.service_name }}"
+              "service": "${{ inputs.service_name }}"
             }
 
       - name: Create a log message
