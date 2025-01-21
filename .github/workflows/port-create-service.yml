@@ -58,7 +58,7 @@ jobs:
           clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
           baseUrl: https://api.getport.io
           operation: UPSERT
-          identifier: ${{ inputs.service_name }}
+          identifier: "${{ inputs.service_name }}_service"
           title: ${{ inputs.service_name }}
           blueprint: service_rep
           relations: |
