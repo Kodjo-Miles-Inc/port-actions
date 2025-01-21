@@ -59,7 +59,7 @@ jobs:
           baseUrl: https://api.getport.io
           operation: UPSERT
           identifier: "${{ inputs.service_name }}_service"
-          title: ${{ inputs.service_name }}
+          title: "${{ inputs.service_name }} Service"
           blueprint: service_rep
           relations: |
             {
