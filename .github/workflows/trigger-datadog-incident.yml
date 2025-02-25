@@ -122,7 +122,7 @@ jobs:
           properties: |-
             {
               "customerImpactScope": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_scope }}",
-              "customerImpacted": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impacted }}",
+              "customerImpacted": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impacted }}"
               ${{ steps.format_date.outputs.customer_impact_start != '' && format(', "customerImpactStart": "{0}"', steps.format_date.outputs.customer_impact_start) || '' }}
               ${{ steps.format_date.outputs.customer_impact_end != '' && format(', "customerImpactEnd": "{0}"', steps.format_date.outputs.customer_impact_end) || '' }},
               "createdBy": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.created_by.data.attributes.name }}",
