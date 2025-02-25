@@ -51,7 +51,7 @@ jobs:
                 "attributes": {
                   "title": "${{ inputs.title }}",
                   "customer_impacted": ${{ inputs.customerImpacted }},
-                  "description": ${{ inputs.customerImpactScope }},
+                  "description": ${{ inputs.customerImpacted == 'false' && format('"{0}"', steps.timestamp.outputs.current_time) || 'null' }},
                   "customer_impact_start": ${{ inputs.customerImpacted == 'false' && format('"{0}"', steps.timestamp.outputs.current_time) || 'null' }},
                   "notification_handles": [
                     {
