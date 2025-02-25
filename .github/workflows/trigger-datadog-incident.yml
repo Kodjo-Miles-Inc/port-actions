@@ -50,9 +50,9 @@ jobs:
                 "type": "incidents",
                 "attributes": {
                   "title": "${{ inputs.title }}",
-                  "customer_impacted": ${{ inputs.customerImpacted }},
-                  "description": ${{ inputs.customerImpacted == 'false' && format('"{0}"', steps.timestamp.outputs.current_time) || ${{ inputs.customerImpactScope }} }},
-                  "customer_impact_start": ${{ inputs.customerImpacted == 'false' && format('"{0}"', steps.timestamp.outputs.current_time) || 'null' }},
+                  "customer_impacted": "${{ inputs.customerImpacted }}",
+                  "description": "${{ inputs.customerImpacted == 'false' && steps.timestamp.outputs.current_time || inputs.customerImpactScope }}",
+                  "customer_impact_start": "${{ inputs.customerImpacted == 'false' && format('"{0}"', steps.timestamp.outputs.current_time) || 'null' }}",
                   "notification_handles": [
                     {
                       "display_name": "${{ inputs.notificationHandleName }}",
