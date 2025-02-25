@@ -17,9 +17,9 @@ on:
       port_context:
         required: true
         type: string
+
 jobs:
   create-entity-in-port-and-update-run:
-
     runs-on: ubuntu-latest
     steps:
       - name: Inform start of Datadog incident creation
@@ -37,6 +37,20 @@ jobs:
         run: |
           echo "current_time=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
+      # ------------------------------------------------------------------------
+      # NEW STEP (1): Debug the JSON fields about to be sent to Datadog
+      # ------------------------------------------------------------------------
+      - name: Debug: Print final JSON fields
+        run: |
+          echo "===== Datadog Payload Fields ====="
+          echo "Title: ${{ inputs.title }}"
+          echo "Customer Impacted: ${{ inputs.customerImpacted }}"
+          echo "Description: ${{ inputs.customerImpacted == 'true' && format('\"{0}\"','This is a hardcoded description because customers ARE impacted') || 'null' }}"
+          echo "Customer Impact Start: ${{ inputs.customerImpacted == 'false' && format('\"{0}\"', steps.timestamp.outputs.current_time) || 'null' }}"
+          echo "Notification Handle Display Name: ${{ inputs.notificationHandleName }}"
+          echo "Notification Handle Email: ${{ inputs.notificationHandleEmail }}"
+      # ------------------------------------------------------------------------
+      
       - name: Create a Datadog incident
         id: datadog_incident
         uses: fjogeleit/http-request-action@v1
@@ -62,6 +76,15 @@ jobs:
                 }
               }
             }
+
+      # ------------------------------------------------------------------------
+      # NEW STEP (2): Debug the raw Datadog response body
+      # ------------------------------------------------------------------------
+      - name: Debug: Print Datadog incident response
+        run: |
+          echo "===== Datadog Response ====="
+          echo '${{ steps.datadog_incident.outputs.response }}'
+      # ------------------------------------------------------------------------
 
       - name: Inform completion of Datadog incident creation
         uses: port-labs/port-github-action@v1
