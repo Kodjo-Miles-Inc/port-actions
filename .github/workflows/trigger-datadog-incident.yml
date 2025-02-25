@@ -4,6 +4,8 @@ on:
     inputs:
       title:
         type: string
+        description: The title of the incident
+        required: true
       customerImpacted:
         type: boolean
         required: true
@@ -19,7 +21,6 @@ on:
         type: string
 jobs:
   create-entity-in-port-and-update-run:
-
     runs-on: ubuntu-latest
     steps:
       - name: Inform start of Datadog incident creation
@@ -50,9 +51,9 @@ jobs:
                 "type": "incidents",
                 "attributes": {
                   "title": "${{ inputs.title }}",
-                  "description": "${{ inputs.title }}",
-                  "customer_impacted": ${{ inputs.customerImpacted }}
-                  ${{ inputs.customerImpacted == 'true' && format(', "customer_impact_scope": "{0}", "customer_impact_start": "{1}"', inputs.customerImpactScope, steps.timestamp.outputs.current_time) || '' }},
+                  "description": "Incident description for ${{ inputs.title }}",  # Set a default description
+                  "customer_impacted": ${{ inputs.customerImpacted }},
+                  ${{ inputs.customerImpacted && format('"customer_impact_scope": "{0}", "customer_impact_start": "{1}"', inputs.customerImpactScope, steps.timestamp.outputs.current_time) || '' }},
                   "notification_handles": [
                     {
                       "display_name": "${{ inputs.notificationHandleName }}",
