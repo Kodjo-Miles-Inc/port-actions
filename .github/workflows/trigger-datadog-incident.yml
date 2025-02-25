@@ -50,8 +50,8 @@ jobs:
                 "type": "incidents",
                 "attributes": {
                   "title": "${{ inputs.title }}",
-                  "customer_impacted": ${{ inputs.customerImpacted }},
-                  "description": "${{ inputs.customerImpactScope || inputs.title }}"
+                  "description": "${{ inputs.title }}",
+                  "customer_impacted": ${{ inputs.customerImpacted }}
                   ${{ inputs.customerImpacted == 'true' && format(', "customer_impact_scope": "{0}", "customer_impact_start": "{1}"', inputs.customerImpactScope, steps.timestamp.outputs.current_time) || '' }},
                   "notification_handles": [
                     {
