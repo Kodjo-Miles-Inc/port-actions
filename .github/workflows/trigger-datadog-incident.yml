@@ -51,7 +51,7 @@ jobs:
                 "attributes": {
                   "title": "${{ inputs.title }}",
                   "customer_impacted": ${{ inputs.customerImpacted }}
-                  ${{ inputs.customerImpacted == 'true' && format(', "customer_impact_scope": "{0}"', inputs.customerImpactScope) || '' }},
+                  ${{ inputs.customerImpacted == 'true' && format(', "customer_impact_scope": "{0}", "description": "{0}"', inputs.customerImpactScope) || '' }},
                   "notification_handles": [
                     {
                       "display_name": "${{ inputs.notificationHandleName }}",
