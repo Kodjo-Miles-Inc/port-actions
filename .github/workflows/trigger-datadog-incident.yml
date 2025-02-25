@@ -4,8 +4,6 @@ on:
     inputs:
       title:
         type: string
-        description: The title of the incident
-        required: true
       customerImpacted:
         type: boolean
         required: true
@@ -21,6 +19,7 @@ on:
         type: string
 jobs:
   create-entity-in-port-and-update-run:
+
     runs-on: ubuntu-latest
     steps:
       - name: Inform start of Datadog incident creation
@@ -45,24 +44,7 @@ jobs:
           url: "${{ secrets.DD_API_URL }}/api/v2/incidents"
           method: "POST"
           customHeaders: '{"Content-Type": "application/json", "DD-API-KEY": "${{ secrets.DD_API_KEY }}", "DD-APPLICATION-KEY": "${{ secrets.DD_APPLICATION_KEY }}"}'
-          data: |
-            {
-              "data": {
-                "type": "incidents",
-                "attributes": {
-                  "title": "${{ inputs.title }}",
-                  "description": "Incident description for ${{ inputs.title }}",  # Set a default description
-                  "customer_impacted": ${{ inputs.customerImpacted }},
-                  ${{ inputs.customerImpacted && format('"customer_impact_scope": "{0}", "customer_impact_start": "{1}"', inputs.customerImpactScope, steps.timestamp.outputs.current_time) || '' }},
-                  "notification_handles": [
-                    {
-                      "display_name": "${{ inputs.notificationHandleName }}",
-                      "handle": "${{ inputs.notificationHandleEmail }}"
-                    }
-                  ]
-                }
-              }
-            }
+          data: '{"data": {"type": "incidents", "attributes": {"title": "${{ inputs.title }}", "description": "${{ inputs.title }}", "customer_impacted": ${{ inputs.customerImpacted }}, "customer_impact_scope": "${{ inputs.customerImpactScope }}", "customer_impact_start": "${{ inputs.customerImpacted == ''true'' && steps.timestamp.outputs.current_time || null }}", "notification_handles": [{"display_name": "${{ inputs.notificationHandleName }}", "handle": "${{ inputs.notificationHandleEmail }}"}]}}}'
 
       - name: Inform completion of Datadog incident creation
         uses: port-labs/port-github-action@v1
