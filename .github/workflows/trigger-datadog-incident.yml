@@ -32,11 +32,6 @@ jobs:
           runId: ${{ fromJson(inputs.port_context).run_id }}
           logMessage: Starting request to create Datadog incident
 
-      - name: Get current timestamp
-        id: timestamp
-        run: |
-          echo "current_time=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
-
       - name: Create a Datadog incident
         id: datadog_incident
         uses: fjogeleit/http-request-action@v1
@@ -44,7 +39,7 @@ jobs:
           url: "${{ secrets.DD_API_URL }}/api/v2/incidents"
           method: "POST"
           customHeaders: '{"Content-Type": "application/json", "DD-API-KEY": "${{ secrets.DD_API_KEY }}", "DD-APPLICATION-KEY": "${{ secrets.DD_APPLICATION_KEY }}"}'
-          data: '{"data": {"type": "incidents", "attributes": {"customer_impact_scope": "${{ inputs.customerImpactScope }}", "customer_impacted": "${{ inputs.customerImpacted }}", "title": "${{ inputs.title }}"${{ inputs.customerImpacted == ''false'' && format(', "customer_impact_start": "{0}"', steps.timestamp.outputs.current_time) || '' }}, "notification_handles": [{"display_name": "${{ inputs.notificationHandleName }}", "handle": "${{ inputs.notificationHandleEmail }}"}]}}}'
+          data: '{"data": {"type": "incidents", "attributes": {"customer_impact_scope": "${{ inputs.customerImpactScope }}", "customer_impacted": "${{ inputs.customerImpacted }}", "title": "${{ inputs.title }}", "notification_handles": [{"display_name": "${{ inputs.notificationHandleName }}", "handle": "${{ inputs.notificationHandleEmail }}"}]}}}'
 
       - name: Inform completion of Datadog incident creation
         uses: port-labs/port-github-action@v1
