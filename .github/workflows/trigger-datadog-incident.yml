@@ -1,3 +1,4 @@
+
 name: Trigger Datadog Incident
 on:
   workflow_dispatch:
@@ -17,9 +18,9 @@ on:
       port_context:
         required: true
         type: string
-
 jobs:
   create-entity-in-port-and-update-run:
+
     runs-on: ubuntu-latest
     steps:
       - name: Inform start of Datadog incident creation
@@ -36,17 +37,6 @@ jobs:
         id: timestamp
         run: |
           echo "current_time=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
-
-      # NEW STEP 1: Debug the key values that will be used in the JSON
-      - name: Debug: Print final JSON fields
-        run: |
-          echo "===== Datadog Payload Fields ====="
-          echo "title: ${{ inputs.title }}"
-          echo "customerImpacted: ${{ inputs.customerImpacted }}"
-          echo "description (logic): ${{ inputs.customerImpacted == 'true' && format('\"{0}\"','This is a hardcoded description because customers ARE impacted') || 'null' }}"
-          echo "customer_impact_start (logic): ${{ inputs.customerImpacted == 'false' && format('\"{0}\"', steps.timestamp.outputs.current_time) || 'null' }}"
-          echo "notificationHandleName: ${{ inputs.notificationHandleName }}"
-          echo "notificationHandleEmail: ${{ inputs.notificationHandleEmail }}"
 
       - name: Create a Datadog incident
         id: datadog_incident
@@ -73,12 +63,6 @@ jobs:
                 }
               }
             }
-
-      # NEW STEP 2: Debug the raw Datadog response
-      - name: Debug: Print Datadog incident response
-        run: |
-          echo "===== Datadog Response ====="
-          echo '${{ steps.datadog_incident.outputs.response }}'
 
       - name: Inform completion of Datadog incident creation
         uses: port-labs/port-github-action@v1
@@ -158,7 +142,7 @@ jobs:
           baseUrl: https://api.getport.io
           operation: UPSERT
           runId: ${{ fromJson(inputs.port_context).run_id }}
-
+    
       - name: Inform completion of Datadog incident ingestion into Port
         uses: port-labs/port-github-action@v1
         with:
