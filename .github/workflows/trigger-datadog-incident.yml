@@ -44,7 +44,12 @@ jobs:
           url: "${{ secrets.DD_API_URL }}/api/v2/incidents"
           method: "POST"
           customHeaders: '{"Content-Type": "application/json", "DD-API-KEY": "${{ secrets.DD_API_KEY }}", "DD-APPLICATION-KEY": "${{ secrets.DD_APPLICATION_KEY }}"}'
-          data: '{"data": {"type": "incidents", "attributes": {"customer_impact_scope": "${{ inputs.customerImpactScope }}", "customer_impacted": "${{ inputs.customerImpacted }}", "title": "${{ inputs.title }}"${{ inputs.customerImpacted == 'true' && format(', "customer_impact_start": "{0}"', steps.timestamp.outputs.current_time) || '' }}, "notification_handles": [{"display_name": "${{ inputs.notificationHandleName }}", "handle": "${{ inputs.notificationHandleEmail }}"}]}}}'
+          data: >-
+            {"data": {"type": "incidents", "attributes": {"customer_impact_scope": "${{ inputs.customerImpactScope }}", 
+            "customer_impacted": ${{ inputs.customerImpacted }}, 
+            "title": "${{ inputs.title }}"${{ inputs.customerImpacted == 'true' && format(', "customer_impact_start": "{0}"', steps.timestamp.outputs.current_time) || '' }}, 
+            "notification_handles": [{"display_name": "${{ inputs.notificationHandleName }}", 
+            "handle": "${{ inputs.notificationHandleEmail }}"}]}}}
 
       - name: Inform completion of Datadog incident creation
         uses: port-labs/port-github-action@v1
@@ -69,14 +74,33 @@ jobs:
       - name: Convert dates to desired format
         id: format_date
         run: |
-          customer_impact_start=$(date -d "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_start }}" -u +"%Y-%m-%dT%H:%M:%SZ")
-          customer_impact_end=$(date -d "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_end }}" -u +"%Y-%m-%dT%H:%M:%SZ")
-          created=$(date -d "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.created }}" -u +"%Y-%m-%dT%H:%M:%SZ")
-          modified=$(date -d "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.modified }}" -u +"%Y-%m-%dT%H:%M:%SZ")
-          echo "customer_impact_start=${customer_impact_start}" >> $GITHUB_OUTPUT
-          echo "customer_impact_end=${customer_impact_end}" >> $GITHUB_OUTPUT
-          echo "created=${created}" >> $GITHUB_OUTPUT
-          echo "modified=${modified}" >> $GITHUB_OUTPUT
+          response='${{ steps.datadog_incident.outputs.response }}'
+          
+          # Extract dates using jq and convert them if they exist
+          customer_impact_start=$(jq -r '.data.attributes.customer_impact_start // empty' <<< "$response")
+          customer_impact_end=$(jq -r '.data.attributes.customer_impact_end // empty' <<< "$response")
+          created=$(jq -r '.data.attributes.created // empty' <<< "$response")
+          modified=$(jq -r '.data.attributes.modified // empty' <<< "$response")
+          
+          # Convert dates if they exist
+          if [ ! -z "$customer_impact_start" ]; then
+            customer_impact_start=$(date -d "$customer_impact_start" -u +"%Y-%m-%dT%H:%M:%SZ")
+          fi
+          if [ ! -z "$customer_impact_end" ]; then
+            customer_impact_end=$(date -d "$customer_impact_end" -u +"%Y-%m-%dT%H:%M:%SZ")
+          fi
+          if [ ! -z "$created" ]; then
+            created=$(date -d "$created" -u +"%Y-%m-%dT%H:%M:%SZ")
+          fi
+          if [ ! -z "$modified" ]; then
+            modified=$(date -d "$modified" -u +"%Y-%m-%dT%H:%M:%SZ")
+          fi
+          
+          # Output the results
+          echo "customer_impact_start=${customer_impact_start:-}" >> $GITHUB_OUTPUT
+          echo "customer_impact_end=${customer_impact_end:-}" >> $GITHUB_OUTPUT
+          echo "created=${created:-}" >> $GITHUB_OUTPUT
+          echo "modified=${modified:-}" >> $GITHUB_OUTPUT
 
       - name: UPSERT Entity
         uses: port-labs/port-github-action@v1
