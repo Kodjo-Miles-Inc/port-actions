@@ -52,7 +52,7 @@ jobs:
                   "title": "${{ inputs.title }}",
                   "customer_impacted": ${{ inputs.customerImpacted }},
                   "customer_impact_scope": "${{ inputs.customerImpactScope }}",
-                  "customer_impact_start": "${{ steps.timestamp.outputs.current_time }}",
+                  ${{ inputs.customerImpacted == 'true' && format(', "customer_impact_start": "{0}"', steps.timestamp.outputs.current_time) || '' }},
                   "notification_handles": [
                     {
                       "display_name": "${{ inputs.notificationHandleName }}",
