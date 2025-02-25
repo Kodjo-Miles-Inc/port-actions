@@ -45,11 +45,23 @@ jobs:
           method: "POST"
           customHeaders: '{"Content-Type": "application/json", "DD-API-KEY": "${{ secrets.DD_API_KEY }}", "DD-APPLICATION-KEY": "${{ secrets.DD_APPLICATION_KEY }}"}'
           data: >-
-            {"data": {"type": "incidents", "attributes": {"customer_impact_scope": "${{ inputs.customerImpactScope }}", 
-            "customer_impacted": ${{ inputs.customerImpacted }}, 
-            "title": "${{ inputs.title }}"${{ inputs.customerImpacted == 'true' && format(', "customer_impact_start": "{0}"', steps.timestamp.outputs.current_time) || '' }}, 
-            "notification_handles": [{"display_name": "${{ inputs.notificationHandleName }}", 
-            "handle": "${{ inputs.notificationHandleEmail }}"}]}}}
+            {
+              "data": {
+                "type": "incidents",
+                "attributes": {
+                  "title": "${{ inputs.title }}",
+                  "customer_impacted": ${{ inputs.customerImpacted }},
+                  "customer_impact_scope": "${{ inputs.customerImpactScope }}",
+                  "customer_impact_start": "${{ steps.timestamp.outputs.current_time }}",
+                  "notification_handles": [
+                    {
+                      "display_name": "${{ inputs.notificationHandleName }}",
+                      "handle": "${{ inputs.notificationHandleEmail }}"
+                    }
+                  ]
+                }
+              }
+            }
 
       - name: Inform completion of Datadog incident creation
         uses: port-labs/port-github-action@v1
