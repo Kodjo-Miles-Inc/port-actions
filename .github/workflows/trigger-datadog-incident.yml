@@ -141,18 +141,16 @@ jobs:
           identifier: ${{ fromJson(steps.datadog_incident.outputs.response).data.id }}
           title: ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.title }}
           blueprint: ${{ fromJson(inputs.port_context).blueprint }}
-          properties: |-
+          properties: |
             {
               "customerImpactScope": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_scope }}",
-              "customerImpacted": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impacted }}"
-              ${{ steps.format_date.outputs.customer_impact_start != '' && format(', "customerImpactStart": "{0}"', steps.format_date.outputs.customer_impact_start) || '' }}
-              ${{ steps.format_date.outputs.customer_impact_end != '' && format(', "customerImpactEnd": "{0}"', steps.format_date.outputs.customer_impact_end) || '' }},
+              "customerImpacted": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impacted }},
               "createdBy": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.created_by.data.attributes.name }}",
               "created": "${{ steps.format_date.outputs.created }}",
               "updatedAt": "${{ steps.format_date.outputs.modified }}",
-              "customerImpactDuration": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_duration }}",
-              "timeToDetect": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_detect }}",
-              "timeToRepair": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_repair }}",
+              "customerImpactDuration": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_duration || 'null' }},
+              "timeToDetect": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_detect || 'null' }},
+              "timeToRepair": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_repair || 'null' }},
               "severity": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.severity }}",
               "state": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.state }}"
             }
