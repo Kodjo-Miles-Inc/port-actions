@@ -140,9 +140,10 @@ jobs:
 
       - name: UPSERT Entity (No Customer Impact)
         if: ${{ !inputs.customerImpacted }}
+        uses: port-labs/port-github-action@v1
         with:
-          identifier: ${{ fromJson(steps.datadog_incident.outputs.response).data.id }}
-          title: ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.title }}
+          identifier: ${{ fromJson(steps.datadog_incident_no_impact.outputs.response).data.id }}
+          title: ${{ fromJson(steps.datadog_incident_no_impact.outputs.response).data.attributes.title }}
           blueprint: ${{ fromJson(inputs.port_context).blueprint }}
           properties: |-
             {
