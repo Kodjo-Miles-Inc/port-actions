@@ -177,7 +177,7 @@ jobs:
           properties: |-
             {
               "customerImpactScope": "${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.customer_impact_scope }}",
-              "customerImpacted": ${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.customer_impacted }},
+              "customerImpacted": "${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.customer_impacted }}",
               "customerImpactStart": "${{ steps.format_date.outputs.customer_impact_start }}",
               "customerImpactEnd": "${{ steps.format_date.outputs.customer_impact_end }}",
               "createdBy": "${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.created_by.data.attributes.name }}",
