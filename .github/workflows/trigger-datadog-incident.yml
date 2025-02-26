@@ -148,12 +148,12 @@ jobs:
           properties: |-
             {
               "customerImpactScope": "${{ fromJson(steps.datadog_incident_no_impact.outputs.response).data.attributes.customer_impact_scope }}",
-              "customerImpacted": "${{ fromJson(steps.datadog_incident_no_impact.outputs.response).data.attributes.customer_impacted }}"
+              "customerImpacted": ${{ fromJson(steps.datadog_incident_no_impact.outputs.response).data.attributes.customer_impacted }}
               ${{ steps.format_date.outputs.customer_impact_start != '' && format(', "customerImpactStart": "{0}"', steps.format_date.outputs.customer_impact_start) || '' }}
-              ${{ steps.format_date.outputs.customer_impact_end != '' && format(', "customerImpactEnd": "{0}"', steps.format_date.outputs.customer_impact_end) || '' }},
+              ${{ steps.format_date.outputs.customer_impact_end != '' && format(', "customerImpactEnd": "{0}"', steps.format_date.outputs.customer_impact_end) || '' }}
+              ${{ steps.format_date.outputs.created != '' && format(', "created": "{0}"', steps.format_date.outputs.created) || '' }}
+              ${{ steps.format_date.outputs.modified != '' && format(', "updatedAt": "{0}"', steps.format_date.outputs.modified) || '' }},
               "createdBy": "${{ fromJson(steps.datadog_incident_no_impact.outputs.response).data.attributes.created_by.data.attributes.name }}",
-              "created": "${{ steps.format_date.outputs.created }}",
-              "updatedAt": "${{ steps.format_date.outputs.modified }}",
               "customerImpactDuration": "${{ fromJson(steps.datadog_incident_no_impact.outputs.response).data.attributes.customer_impact_duration }}",
               "timeToDetect": "${{ fromJson(steps.datadog_incident_no_impact.outputs.response).data.attributes.time_to_detect }}",
               "timeToRepair": "${{ fromJson(steps.datadog_incident_no_impact.outputs.response).data.attributes.time_to_repair }}",
@@ -177,12 +177,12 @@ jobs:
           properties: |-
             {
               "customerImpactScope": "${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.customer_impact_scope }}",
-              "customerImpacted": "${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.customer_impacted }}",
-              "customerImpactStart": "${{ steps.format_date.outputs.customer_impact_start }}",
-              "customerImpactEnd": "${{ steps.format_date.outputs.customer_impact_end }}",
+              "customerImpacted": ${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.customer_impacted }}
+              ${{ steps.format_date.outputs.customer_impact_start != '' && format(', "customerImpactStart": "{0}"', steps.format_date.outputs.customer_impact_start) || '' }}
+              ${{ steps.format_date.outputs.customer_impact_end != '' && format(', "customerImpactEnd": "{0}"', steps.format_date.outputs.customer_impact_end) || '' }}
+              ${{ steps.format_date.outputs.created != '' && format(', "created": "{0}"', steps.format_date.outputs.created) || '' }}
+              ${{ steps.format_date.outputs.modified != '' && format(', "updatedAt": "{0}"', steps.format_date.outputs.modified) || '' }},
               "createdBy": "${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.created_by.data.attributes.name }}",
-              "created": "${{ steps.format_date.outputs.created }}",
-              "updatedAt": "${{ steps.format_date.outputs.modified }}",
               "customerImpactDuration": "${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.customer_impact_duration }}",
               "timeToDetect": "${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.time_to_detect }}",
               "timeToRepair": "${{ fromJson(steps.datadog_incident_with_impact.outputs.response).data.attributes.time_to_repair }}",
