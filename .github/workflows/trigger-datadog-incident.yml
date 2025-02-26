@@ -204,7 +204,7 @@ jobs:
           baseUrl: https://api.getport.io
           operation: PATCH_RUN
           runId: ${{ fromJson(inputs.port_context).run_id }}
-          link: ${{ secrets.DD_API_URL }}/incidents/${{ fromJson(steps.datadog_incident.outputs.response).data.id }}
+          link: ${{ secrets.DD_API_URL }}/incidents/${{ inputs.customerImpacted && fromJson(steps.datadog_incident_with_impact.outputs.response).data.id || fromJson(steps.datadog_incident_no_impact.outputs.response).data.id }}
           logMessage: Finished request to ingest Datadog incident into Port
 
       - name: Inform of workflow completion
