@@ -141,7 +141,19 @@ jobs:
           identifier: ${{ fromJson(steps.datadog_incident.outputs.response).data.id }}
           title: ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.title }}
           blueprint: ${{ fromJson(inputs.port_context).blueprint }}
-          properties: '{"customerImpactScope":"${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_scope }}","customerImpacted":${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impacted }},"createdBy":"${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.created_by.data.attributes.name }}","created":"${{ steps.format_date.outputs.created }}","updatedAt":"${{ steps.format_date.outputs.modified }}","customerImpactDuration":${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_duration || 'null' }},"timeToDetect":${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_detect || 'null' }},"timeToRepair":${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_repair || 'null' }},"severity":"${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.severity }}","state":"${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.state }}"}'
+          properties: >-
+            {
+              "customerImpactScope": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_scope }}",
+              "customerImpacted": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impacted }},
+              "createdBy": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.created_by.data.attributes.name }}",
+              "created": "${{ steps.format_date.outputs.created }}",
+              "updatedAt": "${{ steps.format_date.outputs.modified }}",
+              "customerImpactDuration": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_duration || 'null' }},
+              "timeToDetect": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_detect || 'null' }},
+              "timeToRepair": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_repair || 'null' }},
+              "severity": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.severity }}",
+              "state": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.state }}"
+            }
           relations: "{}"
           clientId: ${{ secrets.PORT_CLIENT_ID }}
           clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
@@ -156,7 +168,21 @@ jobs:
           identifier: ${{ fromJson(steps.datadog_incident.outputs.response).data.id }}
           title: ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.title }}
           blueprint: ${{ fromJson(inputs.port_context).blueprint }}
-          properties: '{"customerImpactScope":"${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_scope }}","customerImpacted":${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impacted }},"customerImpactStart":"${{ steps.format_date.outputs.customer_impact_start }}","customerImpactEnd":"${{ steps.format_date.outputs.customer_impact_end }}","createdBy":"${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.created_by.data.attributes.name }}","created":"${{ steps.format_date.outputs.created }}","updatedAt":"${{ steps.format_date.outputs.modified }}","customerImpactDuration":${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_duration || 'null' }},"timeToDetect":${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_detect || 'null' }},"timeToRepair":${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_repair || 'null' }},"severity":"${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.severity }}","state":"${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.state }}"}'
+          properties: >-
+            {
+              "customerImpactScope": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_scope }}",
+              "customerImpacted": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impacted }},
+              "customerImpactStart": "${{ steps.format_date.outputs.customer_impact_start }}",
+              "customerImpactEnd": "${{ steps.format_date.outputs.customer_impact_end }}",
+              "createdBy": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.created_by.data.attributes.name }}",
+              "created": "${{ steps.format_date.outputs.created }}",
+              "updatedAt": "${{ steps.format_date.outputs.modified }}",
+              "customerImpactDuration": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.customer_impact_duration || 'null' }},
+              "timeToDetect": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_detect || 'null' }},
+              "timeToRepair": ${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.time_to_repair || 'null' }},
+              "severity": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.severity }}",
+              "state": "${{ fromJson(steps.datadog_incident.outputs.response).data.attributes.state }}"
+            }
           relations: "{}"
           clientId: ${{ secrets.PORT_CLIENT_ID }}
           clientSecret: ${{ secrets.PORT_CLIENT_SECRET }}
