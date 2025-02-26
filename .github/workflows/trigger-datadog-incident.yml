@@ -1,4 +1,3 @@
-
 name: Trigger Datadog Incident
 on:
   workflow_dispatch:
@@ -38,8 +37,9 @@ jobs:
         run: |
           echo "current_time=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
 
-      - name: Create a Datadog incident
-        id: datadog_incident
+      - name: Create a Datadog incident (No Customer Impact)
+        id: datadog_incident_no_impact
+        if: ${{ !inputs.customerImpacted }}
         uses: fjogeleit/http-request-action@v1
         with:
           url: "${{ secrets.DD_API_URL }}/api/v2/incidents"
@@ -51,9 +51,9 @@ jobs:
                 "type": "incidents",
                 "attributes": {
                   "title": "${{ inputs.title }}",
-                  "customer_impacted": "${{ inputs.customerImpacted }}",
-                  "description": ${{ inputs.customerImpacted == 'true' && format('"{0}"', inputs.customerImpactScope) || '"No customer impact"' }},
-                  "customer_impact_start": ${{ inputs.customerImpacted == 'false' && format('"{0}"', steps.timestamp.outputs.current_time) || 'null' }},
+                  "customer_impacted": ${{ inputs.customerImpacted }},
+                  "description": null,
+                  "customer_impact_start": "${{ steps.timestamp.outputs.current_time }}",
                   "notification_handles": [
                     {
                       "display_name": "${{ inputs.notificationHandleName }}",
@@ -63,6 +63,25 @@ jobs:
                 }
               }
             }
+
+      - name: Create a Datadog incident (With Customer Impact)
+        id: datadog_incident_with_impact
+        if: ${{ inputs.customerImpacted }}
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: "${{ secrets.DD_API_URL }}/api/v2/incidents"
+          method: "POST"
+          customHeaders: '{"Content-Type": "application/json", "DD-API-KEY": "${{ secrets.DD_API_KEY }}", "DD-APPLICATION-KEY": "${{ secrets.DD_APPLICATION_KEY }}"}'
+          data: '{"data": {"type": "incidents", "attributes": {"customer_impact_scope": "${{ inputs.customerImpactScope }}", "customer_impacted": ${{ inputs.customerImpacted }}, "title": "${{ inputs.title }}", "notification_handles": [{"display_name": "${{ inputs.notificationHandleName }}", "handle": "${{ inputs.notificationHandleEmail }}"}]}}}'
+
+      - name: Set output ID
+        id: datadog_incident
+        run: |
+          if ${{ inputs.customerImpacted }}; then
+            echo "response=${{ steps.datadog_incident_with_impact.outputs.response }}" >> $GITHUB_OUTPUT
+          else
+            echo "response=${{ steps.datadog_incident_no_impact.outputs.response }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Inform completion of Datadog incident creation
         uses: port-labs/port-github-action@v1
